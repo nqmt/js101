@@ -1,0 +1,53 @@
+<html>
+<body>
+<ul id="content"></ul>
+<button onClick="startEvent()">start event</button>
+<button onClick="stopEvent()">stop event</button>
+</body>
+<script>
+  let eventSource;
+
+  function createListItem(text) {
+    const node = document.createElement("li");
+    const textNode = document.createTextNode(text);
+    node.appendChild(textNode);
+
+    return node
+  }
+
+  function stopEvent() {
+    if (eventSource) eventSource.close()
+  }
+
+  function startEvent() {
+    eventSource = new EventSource('http://localhost:6001/event');
+
+    eventSource.addEventListener('open', function (event) {
+      console.log('start subscribe event');
+    });
+    eventSource.addEventListener('message', function (messageEvent) {
+      console.log('Got', messageEvent);
+      document.getElementById('content').appendChild(createListItem(messageEvent.data));
+    });
+    // [Note] another way to subscribe
+    // eventSource.onmessage = function (messageEvent) {
+    //   console.log('Got', messageEvent);
+    //   document.getElementById('content').appendChild(createListItem(messageEvent.data));
+    // }
+
+    // [Note] use this method for stop connection or check specific data by parser
+    eventSource.addEventListener('stop', function (event) {
+      console.log('stop event');
+      stopEvent()
+    });
+    eventSource.addEventListener('error', function (event) {
+      if (eventSource.readyState === eventSource.CONNECTING) {
+        console.log(`Reconnecting (readyState=${eventSource.readyState})...`);
+      }
+      console.error("Error has occurred.");
+    });
+  }
+
+
+</script>
+</html>
