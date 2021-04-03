@@ -24,6 +24,8 @@ app.get('/event', async function(req,res) {
       res.write(`event: stop\n`);
       res.write(`data: stop\n`);
       res.write(`id: ${i}\n\n`);
+      
+      i++;
       continue;
     }
     
