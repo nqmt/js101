@@ -1,12 +1,12 @@
 const express = require('express');
 const fs = require('fs');
-const app =express();
+const app = express();
 const EventSource = require('eventsource')
 
-app.get('/', async function(req,res) {
+app.get('/', async function (req, res) {
   console.log(EventSource)
   const eventSource = new EventSource('http://localhost:6001/event')
-  
+
   eventSource.addEventListener('message', function (event) {
     console.log(event)
   })
@@ -18,7 +18,7 @@ app.get('/', async function(req,res) {
     console.error(err);
     eventSource.close()
   })
-  
+
   return res.status(200).send('success')
 });
 
